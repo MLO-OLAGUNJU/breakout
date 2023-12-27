@@ -5,6 +5,7 @@
   font-family: "Poppins", sans-serif;
 }
 .grid {
+  margin-top: 80px;
   position: absolute;
   width: 560px;
   height: 300px;
