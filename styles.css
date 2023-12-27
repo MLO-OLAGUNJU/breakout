@@ -22,3 +22,7 @@
   height: 20px;
   background-color: purple;
 }
+.ball {
+  position: absolute;
+  border-radius: 100%;
+}
