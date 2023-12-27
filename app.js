@@ -1,28 +1,30 @@
 const grid = document.querySelector(".grid");
+const scoreDisplay = document.querySelector("#score");
 const blockWidth = 100;
 const blockHeight = 20;
+const ballDiameter = 20;
 const boardWidth = 560;
 const boardHeight = 300;
-const scoreDisplay = document.querySelector("#score");
-let timerId;
-const ballDiameter = 20;
 let xDirection = -2;
 let yDirection = 2;
-let score = 0;
 
 const userStart = [230, 10];
 let currentPosition = userStart;
 
-const ballStartPosition = [270, 40];
-let ballCurrentPosition = ballStartPosition;
+const ballStart = [270, 40];
+let ballCurrentPosition = ballStart;
 
-// create block individual
+let timerId;
+let score = 0;
+
+alert("CLICK OK TO PLAY GAME");
+//my block
 class Block {
   constructor(xAxis, yAxis) {
     this.bottomLeft = [xAxis, yAxis];
     this.bottomRight = [xAxis + blockWidth, yAxis];
-    this.topLeft = [xAxis, yAxis + blockHeight];
     this.topRight = [xAxis + blockWidth, yAxis + blockHeight];
+    this.topLeft = [xAxis, yAxis + blockHeight];
   }
 }
 
@@ -45,26 +47,30 @@ const blocks = [
   new Block(450, 210),
 ];
 
-//draw all my blocks
-const addBlocks = () => {
+//draw my blocks
+function addBlocks() {
   for (let i = 0; i < blocks.length; i++) {
     const block = document.createElement("div");
     block.classList.add("block");
     block.style.left = blocks[i].bottomLeft[0] + "px";
     block.style.bottom = blocks[i].bottomLeft[1] + "px";
     grid.appendChild(block);
+    console.log(blocks[i].bottomLeft);
   }
-};
-
+}
 addBlocks();
-
-//add User
 
 //add user
 const user = document.createElement("div");
 user.classList.add("user");
 grid.appendChild(user);
 drawUser();
+
+//add ball
+const ball = document.createElement("div");
+ball.classList.add("ball");
+grid.appendChild(ball);
+drawBall();
 
 //move user
 function moveUser(e) {
@@ -93,34 +99,23 @@ function drawUser() {
   user.style.bottom = currentPosition[1] + "px";
 }
 
-document.addEventListener("keydown", moveUser);
-// draw the ball
-const drawBall = () => {
+//draw Ball
+function drawBall() {
   ball.style.left = ballCurrentPosition[0] + "px";
   ball.style.bottom = ballCurrentPosition[1] + "px";
-};
+}
 
-// add ball
-const ball = document.createElement("div");
-ball.classList.add("ball");
-ball.style.width = 20 + "px";
-ball.style.height = 20 + "px";
-ball.style.backgroundColor = "red";
-drawBall();
-grid.appendChild(ball);
-
-//move the ball
-const moveTheBall = () => {
+//move ball
+function moveBall() {
   ballCurrentPosition[0] += xDirection;
   ballCurrentPosition[1] += yDirection;
   drawBall();
-  checkForCollision();
-};
-
-timerId = setInterval(moveTheBall, 30);
+  checkForCollisions();
+}
+timerId = setInterval(moveBall, 30);
 
 //check for collisions
-const checkForCollision = () => {
+function checkForCollisions() {
   //check for block collision
   for (let i = 0; i < blocks.length; i++) {
     if (
@@ -135,19 +130,23 @@ const checkForCollision = () => {
       changeDirection();
       score++;
       scoreDisplay.innerHTML = score;
+      if (blocks.length == 0) {
+        scoreDisplay.innerHTML = "You Win!";
+        clearInterval(timerId);
+        document.removeEventListener("keydown", moveUser);
+      }
     }
   }
-
-  // check for wall collisons
+  // check for wall hits
   if (
     ballCurrentPosition[0] >= boardWidth - ballDiameter ||
-    ballCurrentPosition[1] >= boardHeight - ballDiameter ||
-    ballCurrentPosition[0] <= 0
+    ballCurrentPosition[0] <= 0 ||
+    ballCurrentPosition[1] >= boardHeight - ballDiameter
   ) {
     changeDirection();
   }
 
-  //check for user collisions
+  //check for user collision
   if (
     ballCurrentPosition[0] > currentPosition[0] &&
     ballCurrentPosition[0] < currentPosition[0] + blockWidth &&
@@ -157,16 +156,15 @@ const checkForCollision = () => {
     changeDirection();
   }
 
-  //check for game over
+  //game over
   if (ballCurrentPosition[1] <= 0) {
     clearInterval(timerId);
-    scoreDisplay.textContent = "Game Over!";
+    scoreDisplay.innerHTML = "You lose!";
     document.removeEventListener("keydown", moveUser);
   }
-};
+}
 
-//changeDirection
-const changeDirection = () => {
+function changeDirection() {
   if (xDirection === 2 && yDirection === 2) {
     yDirection = -2;
     return;
@@ -183,4 +181,4 @@ const changeDirection = () => {
     xDirection = 2;
     return;
   }
-};
+}
