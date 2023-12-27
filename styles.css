@@ -6,15 +6,19 @@
 }
 .grid {
   position: absolute;
-  width: 600px;
+  width: 560px;
   height: 300px;
   border: 1px solid black;
 }
 .block {
   position: absolute;
-  left: 50px;
-  bottom: 50px;
   width: 100px;
   height: 20px;
   background-color: blue;
+}
+.user {
+  position: absolute;
+  width: 100px;
+  height: 20px;
+  background-color: purple;
 }
