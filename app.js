@@ -43,3 +43,7 @@ const addBlocks = () => {
 };
 
 addBlocks();
+
+//add User
+
+const user = document.createElement("div");
